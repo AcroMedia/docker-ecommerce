@@ -1,9 +1,14 @@
 FROM node:lts
 
 WORKDIR /app
-# Pre-scaffold project seamlessly at build time to shorten evaluation startup loop.
-# Pass 'medusa-store' without path prefixes to avoid naming validation errors.
-RUN echo "N" | npx create-medusa-app@latest medusa-store --skip-db
+
+# Clone the official Medusa v2 default starter repository directly.
+# This completely avoids interactive terminal prompts and TTY spinner hangs.
+RUN git clone --depth=1 https://github.com/medusajs/medusa-starter-default.git medusa-store
 
 WORKDIR /app/medusa-store
+
+# Standard non-interactive dependency compilation
+RUN npm install
+
 EXPOSE 9000
