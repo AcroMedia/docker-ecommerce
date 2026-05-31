@@ -1,7 +1,7 @@
 FROM ruby:4.0-slim
 
 RUN apt-get update && apt-get install -y \
-    build-essential git nodejs npm sqlite3 libsqlite3-dev \
+    build-essential git nodejs npm sqlite3 libsqlite3-dev zlib1g-dev \
     && npm install --global yarn && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
