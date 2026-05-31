@@ -13,9 +13,10 @@ RUN apt-get update && apt-get install -y \
 # Download OpenCart via the parameterized version layout
 ADD https://github.com/opencart/opencart/releases/download/${OPENCART_VERSION}/opencart-${OPENCART_VERSION}.zip /tmp/opencart.zip
 
-# Extract and isolate files (fixing the nested parent directory layout mismatch)
+# Unzip and dynamically locate the 'upload' folder to handle varying archive layouts gracefully
 RUN unzip /tmp/opencart.zip -d /tmp/opencart_dist \
-    && mv /tmp/opencart_dist/opencart-${OPENCART_VERSION}/upload/* /var/www/html/ \
+    && TARGET_UPLOAD=$(find /tmp/opencart_dist -type d -name "upload" | head -n 1) \
+    && mv "$TARGET_UPLOAD"/* /var/www/html/ \
     && mv /var/www/html/config-dist.php /var/www/html/config.php \
     && mv /var/www/html/admin/config-dist.php /var/www/html/admin/config.php \
     && chown -R www-data:www-data /var/www/html/ \
