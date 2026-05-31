@@ -1,13 +1,12 @@
-FROM ruby:4.0-slim
+FROM ruby:4.0
 
-RUN apt-get update && apt-get install -y \
-    build-essential git nodejs npm sqlite3 libsqlite3-dev zlib1g-dev \
-    && npm install --global yarn && rm -rf /var/lib/apt/lists/*
+# Node and Yarn are still required by the Rails asset pipeline
+RUN apt-get update && apt-get install -y nodejs npm && npm install --global yarn && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 RUN git clone --depth=1 https://github.com/spree/spree-starter.git .
 
-# Dynamic correction: Strip the strict Ruby version lock to allow newer patch releases
+# Strip the strict Ruby version lock to gracefully handle minor image patch updates
 RUN sed -i '/^ruby /d' Gemfile
 
 RUN bundle config set --local deployment 'false' && bundle install
