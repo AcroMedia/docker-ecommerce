@@ -86,11 +86,11 @@ Access URL: http://localhost:8000/graphql/
 ### 6. Medusa
 An open-source headless engine paired alongside a standard datastore container.
 ```bash
-# 1. Start Database
+# 1. Start Backing Database
 docker run -d --name medusa-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=medusa postgres:15
 
-# 2. Start Medusa Engine
-docker run -d -p 9000:9000 --name medusa --link medusa-db:db -e DATABASE_URL=postgres://postgres:secret@db:5432/medusa acromedia/ecommerce:medusash -c "npx medusa db:migrate && npm run start"
+# 2. Execute Internal Migrations & Run Engine via Yarn
+docker run -d -p 9000:9000 --name medusa --link medusa-db:db -e DATABASE_URL=postgres://postgres:secret@db:5432/medusa acromedia/ecommerce:medusa sh -c "npx medusa db:migrate && yarn start"
 ```
 Access URL: http://localhost:9000/health
 
