@@ -1,5 +1,8 @@
 FROM php:8.4-apache
 
+# Define variable for straightforward version bumps
+ARG OPENCART_VERSION=4.1.0.3
+
 # Install platform-required extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip \
@@ -7,10 +10,12 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) gd mysqli zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and stage OpenCart webroot
-ADD https://github.com/opencart/opencart/releases/download/4.0.2.3/opencart-4.0.2.3.zip /tmp/opencart.zip
+# Download OpenCart via the parameterized version layout
+ADD https://github.com/opencart/opencart/releases/download/${OPENCART_VERSION}/opencart-${OPENCART_VERSION}.zip /tmp/opencart.zip
+
+# Extract and isolate files (fixing the nested parent directory layout mismatch)
 RUN unzip /tmp/opencart.zip -d /tmp/opencart_dist \
-    && mv /tmp/opencart_dist/upload/* /var/www/html/ \
+    && mv /tmp/opencart_dist/opencart-${OPENCART_VERSION}/upload/* /var/www/html/ \
     && mv /var/www/html/config-dist.php /var/www/html/config.php \
     && mv /var/www/html/admin/config-dist.php /var/www/html/admin/config.php \
     && chown -R www-data:www-data /var/www/html/ \
