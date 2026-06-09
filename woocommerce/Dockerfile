@@ -17,3 +17,6 @@ RUN composer init --no-interaction \
     && composer require wpackagist-plugin/woocommerce:* wp-cli/wp-cli-bundle --no-interaction --prefer-dist \
     && ln -s /usr/src/wordpress/vendor/bin/wp /usr/local/bin/wp \
     && chown -R www-data:www-data /usr/src/wordpress
+
+# 5. RESTORE CONTEXT: Return to default webroot so entrypoint copies files correctly
+WORKDIR /var/www/html
