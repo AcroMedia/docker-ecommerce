@@ -28,7 +28,7 @@ This repository maintains custom evaluation images for platforms lacking lightwe
 docker run -d --name woo-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=wordpress mysql:8
 
 # 2. Start WooCommerce
-docker run -d -p 8080:80 --name woocommerce --link woo-db:mysql -e WORDPRESS_DB_PASSWORD=secret acromedia/ecommerce:woocommerce
+docker run -d -p 8080:80 --name woocommerce --link woo-db:mysql -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=secret acromedia/ecommerce:woocommerce
 ```
 
 Access URL: http://localhost:8080
