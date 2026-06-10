@@ -11,6 +11,12 @@ RUN sed -i '/^ruby /d' Gemfile
 
 RUN bundle config set --local deployment 'false' && bundle install
 
+# 1. Install frontend Node dependencies required by Spree's asset tree
+RUN yarn install
+
+# 2. Compile assets into the public path at build time using a dummy key
+RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=development bin/rails assets:precompile
+
 ENV RAILS_ENV=development
 ENV RAILS_SERVE_STATIC_FILES=true
 EXPOSE 3000
