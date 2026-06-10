@@ -9,15 +9,6 @@ RUN git clone --depth=1 https://github.com/spree/spree-starter.git .
 # Strip the strict Ruby version lock to gracefully handle minor image patch updates
 RUN sed -i '/^ruby /d' Gemfile
 
-# Forcefully re-route Rails to use a local standalone SQLite file
-RUN cat <<EOF > config/database.yml
-development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-  pool: 5
-  timeout: 5000
-EOF
-
 RUN bundle config set --local deployment 'false' && bundle install
 
 ENV RAILS_ENV=development

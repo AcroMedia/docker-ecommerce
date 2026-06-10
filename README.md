@@ -25,7 +25,7 @@ This repository maintains custom evaluation images for platforms lacking lightwe
 ### 1. WooCommerce
 ```bash
 # 1. Start Database
-docker run -d --name woo-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=wordpress mysql:8
+docker run -d --name woo-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=wordpress mysql:lts
 
 # 2. Start WooCommerce
 docker run -d -p 8080:80 --name woocommerce --link woo-db:mysql -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=secret acromedia/ecommerce:woocommerce
@@ -38,7 +38,7 @@ Note: Complete the basic WordPress screen wizard; WooCommerce will be waiting fo
 ### 2. OpenCart
 ```bash
 # 1. Start Database
-docker run -d --name opencart-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=opencart mysql:8
+docker run -d --name opencart-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=opencart mysql:lts
 
 # 2. Start OpenCart
 docker run -d -p 8080:80 --name opencart --link opencart-db:mysql acromedia/ecommerce:opencart
@@ -62,8 +62,11 @@ Admin Panel: http://localhost:8080/admin (User: `admin` / Pass: `shopware`)
 ### 4. SpreeCommerce
 A completely self-contained Ruby on Rails engine setup utilizing an internal SQLite profile for instant preview.
 ```bash
-# Start Spree
-docker run -d -p 3000:3000 --name spree acromedia/ecommerce:spree
+# 1. Start Backing Postgres Database
+docker run -d --name spree-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=spree_development postgres
+
+# 2. Start Spree Engine linked to the Database
+docker run -d -p 3000:3000 --name spree --link spree-db:db -e DATABASE_URL=postgresql://postgres:secret@db:5432/spree_development acromedia/ecommerce:spree
 ```
 
 Access URL: http://localhost:3000
@@ -75,7 +78,7 @@ Admin Panel: http://localhost:3000/admin (User: `spree@example.com` / Pass: `spr
 Launches the official Saleor Core engine. Note that this spins up the backend GraphQL API playground directly.
 ```bash
 # 1. Start Database
-docker run -d --name saleor-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=saleor postgres:15
+docker run -d --name saleor-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=saleor postgres
 
 # 2. Run Migrations & Start Saleor Core API
 docker run -it -p 8000:8000 --name saleor --link saleor-db:db -e DATABASE_URL=postgres://postgres:secret@db:5432/saleor ghcr.io/saleor/saleor:latest sh -c "python manage.py migrate && python manage.py populatedb && python manage.py runserver 0.0.0.0:8000"
@@ -87,7 +90,7 @@ Access URL: http://localhost:8000/graphql/
 An open-source headless engine paired alongside a standard datastore container.
 ```bash
 # 1. Start Backing Database
-docker run -d --name medusa-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=medusa postgres:15
+docker run -d --name medusa-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=medusa postgres
 
 # 2. Execute Internal Migrations & Run Engine via Yarn
 docker run -d -p 9000:9000 --name medusa --link medusa-db:db -e DATABASE_URL=postgres://postgres:secret@db:5432/medusa acromedia/ecommerce:medusa sh -c "npx medusa db:migrate && yarn start"
@@ -98,9 +101,9 @@ Access URL: http://localhost:9000/health
 Evaluates Drupal Commerce using a pre-packaged optimization layer image.
 ```bash
 # 1. Start Database
-docker run -d --name drupal-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=drupal mariadb:latest
+docker run -d --name drupal-db -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=drupal mysql:lts
 
 # 2. Start Drupal Commerce Container
-docker run -d -p 8080:80 --name drupal-commerce --link drupal-db:mysql insready/drupal-commerce:11
+docker run -d -p 8080:80 --name drupal-commerce --link drupal-db:mysql insready/drupal-commerce:11-dev
 ```
 Access URL: http://localhost:8080
