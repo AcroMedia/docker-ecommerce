@@ -93,7 +93,10 @@ An open-source headless engine paired alongside a standard datastore container.
 docker run -d --name medusa-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=medusa postgres
 
 # 2. Execute Internal Migrations & Run Engine via Yarn
-docker run -d -p 9000:9000 --name medusa --link medusa-db:db -e DATABASE_URL=postgres://postgres:secret@db:5432/medusa acromedia/ecommerce:medusa sh -c "npx medusa db:migrate && yarn start"
+docker run -d -p 9000:9000 --name medusa --link medusa-db:db \
+  -e DATABASE_URL=postgres://postgres:secret@db:5432/medusa \
+  acromedia/ecommerce:medusa \
+  sh -c "npx medusa db:migrate && yarn seed && yarn start"
 ```
 Access URL: http://localhost:9000/health
 

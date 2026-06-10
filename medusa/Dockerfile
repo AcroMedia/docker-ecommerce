@@ -6,7 +6,12 @@ RUN git clone --depth=1 https://github.com/medusajs/medusa-starter-default.git m
 
 WORKDIR /app/medusa-store
 
-# Activate Corepack and use Yarn to resolve the nested dependency graph instantly
-RUN corepack enable && yarn install
+# Set required fallback parameters to pass Medusa's build-time validation layers
+ENV JWT_SECRET=supersecret
+ENV COOKIE_SECRET=supersecret
+ENV NODE_ENV=development
+
+# Enable Corepack, download dependencies flatly, and pre-compile the server bundle
+RUN corepack enable && yarn install && yarn build
 
 EXPOSE 9000
