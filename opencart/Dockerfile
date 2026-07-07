@@ -1,7 +1,7 @@
 FROM php:8.4-apache
 
 # Define variable for straightforward version bumps
-ARG OPENCART_VERSION=4.1.0.3
+ARG OPENCART_VERSION=4.0.2.3
 
 # Install platform-required extensions
 RUN apt-get update && apt-get install -y \
